@@ -60,6 +60,7 @@ RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 
 USER 1000
 
+# Start a jupyter notebook server
 CMD ["jupyter notebook \
   --NotebookApp.allow_origin='https://colab.research.google.com' \
   --port=8888 \
