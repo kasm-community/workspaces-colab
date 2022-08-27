@@ -23,6 +23,11 @@ RUN bash /tmp/install_python_packages.sh
 COPY resources/install_anaconda.sh /tmp/
 RUN bash /tmp/install_anaconda.sh
 
+# Add Jupyter extras and configure a notebook to start
+RUN pip install jupyter_http_over_ws
+
+RUN jupyter serverextension enable --py jupyter_http_over_ws
+
 # Install packages in conda environment
 USER 1000
 COPY resources/install_conda_packages.sh /tmp/
@@ -45,15 +50,6 @@ RUN cp /usr/share/applications/org.remmina.Remmina.desktop $HOME/Desktop/ \
     && chmod +x $HOME/Desktop/org.remmina.Remmina.desktop \
     && chown 1000:1000 $HOME/Desktop/org.remmina.Remmina.desktop
 
-RUN pip install jupyterlab jupyter_http_over_ws
-
-RUN jupyter serverextension enable --py jupyter_http_over_ws
-
-RUN jupyter notebook \
-  --NotebookApp.allow_origin='https://colab.research.google.com' \
-  --port=8888 \
-  --NotebookApp.port_retries=0
-
 ######### END CUSTOMIZATIONS ########
 
 RUN chown -R 1000:0 $HOME
@@ -64,4 +60,7 @@ RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 
 USER 1000
 
-CMD ["--tail-log"]
+CMD ["jupyter notebook \
+  --NotebookApp.allow_origin='https://colab.research.google.com' \
+  --port=8888 \
+  --NotebookApp.port_retries=0"]
